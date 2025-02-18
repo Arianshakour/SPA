@@ -1,0 +1,57 @@
+﻿@using SPA.Domain.Common
+@using SPA.Domain.Entities
+@model UserViewModel
+
+
+@if (Model.UserList != null && Model.UserList.Any())
+{
+    <div class="table-responsive">
+        <table class=" table" style="font-family : yekan">
+            <thead style="background-color:#12cf77">
+                <tr>
+                    <th>ردیف</th>
+                    <th>نام</th>
+                    <th>نام خانوادگی</th>
+                    <th>سن</th>
+                    <th>آدرس</th>
+                    <th>تاریخ تولد</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = (Model.pager.CurrentPage - 1) * Model.pager.PageSize + 1;
+                    foreach (var item in Model.UserList)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.Name</td>
+                            <td>@item.Family</td>
+                            <td>@item.Age</td>
+                            <td>@item.Address</td>
+                            <td>@item.Brithday.ToShamsi()</td>
+                            <td>
+                                <a class="btn-icon fa-lg" onclick="openDetailsUser(@item.Id)" title="مشاهده جزئیات"><i class='fas fa-info-circle fa-lg'></i></a>
+                                <a class="btn-icon fa-lg" onclick="openEditUser(@item.Id)" title="ویرایش"><i class='fas fa-edit'></i></a>
+                                <a class="btn-icon fa-lg" onclick="openDeleteUser(@item.Id)" title="حذف"><i class='fas fa-trash'></i></a>
+                                @*<a onclick="getEditModal(@item.Id)" class="btn-icon fa-lg" title="ویرایش"><i class='fas fa-edit'></i></a>
+                                <a onclick="Delete(@item.Id)" class="btn-icon fa-lg" title="حذف"><i class='fas fa-trash'></i></a>*@
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info w-100 text-center" style="text-align:center;font-family : yekan" id="lll">
+        کاربری یافت نشد
+    </div>
+}
+
+<div id="pager">
+    <partial name="~/Views/User/_pager.cshtml" />
+</div>

@@ -1,0 +1,199 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+/*baraye Font ezafe kardan hamchenin dar qesmat body ham ezafe kon*/
+@font-face {
+    font-family: 'Yekan';
+    src: url('/Font/Yekan.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Yekan', sans-serif;
+    margin-bottom: 60px;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+.dark-mode {
+    background-color: black;
+    color: white;
+}
+
+    .dark-mode a {
+        color: lightgray;
+    }
+
+    .dark-mode .bg-white {
+        background-color: red !important;
+    }
+
+.btn-icon.fa-lg {
+    color: red;
+    margin: 5px;
+}
+
+    .btn-icon.fa-lg:hover {
+        color: orange;
+    }
+
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 43px;
+    height: 26px;
+    display: block;
+    margin-top: 7px;
+    margin-right: 8px;
+}
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 19px;
+        width: 19px;
+        border-radius: 50%;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+    input:checked + .slider:before {
+        transform: translateX(14px);
+    }
+
+.dark-mode .form-control {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+}
+
+.dark-mode table {
+    color: white;
+}
+
+.dark-mode th, .dark-mode td {
+    border-color: #777;
+    color: white;
+}
+
+.dark-mode thead {
+    background-color: red !important;
+}
+
+.dark-mode a {
+    color: white;
+}
+
+.dark-mode #Search {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+}
+
+.dark-mode #sortDropdown {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+}
+
+.dark-mode .page-link {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+}
+
+    .dark-mode .page-link:hover {
+        background-color: gray;
+    }
+
+.page-link {
+    background-color: #12cf77;
+    border-color: #12cf77;
+    color: black;
+}
+
+.page-item.active {
+    background-color: #12cf77;
+    border-color: #12cf77;
+    color: black;
+}
+
+.dark-mode .page-item.active .page-link {
+    background-color: red;
+    border-color: red;
+    color: black;
+}
+
+.page-item.active .page-link {
+    color: black;
+    background-color: white;
+    border-color: red;
+}
+
+.dark-mode #pageSizeDropdown {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+}
+
+
+
+.dark-mode #Search::placeholder {
+    color: lightgray;
+}
+
+.dark-mode .modal-content {
+    background-color: #333;
+    color: white;
+}
+
+.dark-mode .modal-header {
+    border-bottom: 1px solid #555;
+}
+
+.dark-mode .modal-footer {
+    border-top: 1px solid #555;
+}
+
+.dark-mode .modal-title {
+    color: white;
+}

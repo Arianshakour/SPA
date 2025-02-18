@@ -1,0 +1,335 @@
+﻿@using SPA.Domain.Entities
+@model UserViewModel
+
+<h1 style="margin:10px">لیست</h1>
+<div id="option">
+    <a type="button" id="createBtn" onclick="openAddUserPage()" class="btn btn-primary">افزودن</a>
+    <a id="showDeletedButton" class="btn btn-warning" onclick="showDeletedUsers()" style="color:white;margin:10px;"> نمایش کاربران حذف شده </a>
+    <a id="backToUsersButton" class="btn btn-primary" onclick="showAllUsers()" style="display: none;margin:10px;margin-right:0px;"> بازگشت به لیست کاربران </a>
+    <a class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> خروجی اکسل</a>
+    <input class="form-control" placeholder="عبارت مورد نظر را برای جستجو وارد کنید ..." id="Search" />
+    <div class="form-group d-flex align-items-center">
+        <label style="margin-right: 10px; white-space: nowrap;margin-left: 3px;">مرتب سازی بر اساس</label>
+        <select id="sortDropdown" onchange="changeSort()" class="form-control  form-control-sm" style="margin:10px" asp-items="@(new SelectList(Model.dropDownsForSort, "value", "text"))">
+        </select>
+    </div>
+</div>
+<div id="gridUser">
+    <partial name="~/Views/User/_gridUser.cshtml" />
+</div>
+<div id="gridDeletedUser" style="display:none;">
+    <partial name="~/Views/User/_gridUser.cshtml" />
+</div>
+<div id="addUserModal"></div>
+
+@section script
+{
+    <script>
+        function showDeletedUsers() {
+            var del = 1;
+            var url = '@Url.Action("List", "User")';
+            $.ajax({
+                url: url,
+                data: { pageSize:4, isDeleted: del },
+                type: "Get",
+                success: function (result) {
+                    $("#gridUser").hide();
+                    $("#gridDeletedUser").html(result);
+                    $("#gridDeletedUser").show();
+                    $("#showDeletedButton").hide();
+                    $("#createBtn").hide();
+                    $("#backToUsersButton").show();
+                    $("#sortDropdown").val(11);
+                }
+            });
+        }
+
+        function showAllUsers() {
+            $.ajax({
+                url: '/User/List',
+                type: 'GET',
+                success: function (result) {
+                    $("#gridUser").empty();
+                    $("#gridUser").html(result);
+                    $("#gridDeletedUser").hide();
+                    $("#gridUser").show();
+                    $("#createBtn").show();
+                    $("#showDeletedButton").show();
+                    $("#backToUsersButton").hide();
+                    $("#sortDropdown").val(11);
+                },
+            });
+        }
+
+        $(document).ready(function () {
+            $("#Search").keyup(function () {
+                var searchvalue = $("#Search").val();
+                var Sort = $("#sortDropdown").val();
+                var isDeleted = ($("#showDeletedButton").is(":visible")) ? 0 : 1;
+                $.ajax({
+                    type: "Get",
+                    url: "/User/List",
+                    data: {
+                        searchValue: searchvalue, sort: Sort, isDeleted: isDeleted
+                    },
+                    success: function (result) {
+                        if (isDeleted === 1) {
+                            $("#gridDeletedUser").empty();
+                            $("#gridDeletedUser").html(result);
+                        } else {
+                            $("#gridUser").empty();
+                            $("#gridUser").html(result);
+                        }
+                    },
+                });
+            });
+        });
+
+        $(document).on("click", ".pagination-link", function (e) {
+            e.preventDefault();
+            var page = $(this).attr("href");
+            var pageSize = $("#pageSizeDropdown").val();
+            var Sort = $("#sortDropdown").val();
+            var isDeleted = ($("#showDeletedButton").is(":visible")) ? 0 : 1;
+            var url = page + "&pageSize=" + pageSize + "&sort=" + Sort + "&isDeleted=" + isDeleted;
+            if ($("#Search").val() != "") {
+                url += "&searchValue=" + $("#Search").val();
+            }
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (result) {
+                    if (isDeleted == 0) {
+                        $("#gridUser").empty().html(result);
+                        $("#gridUser").show();
+                        $("#gridDeletedUser").hide();
+                    } else {
+                        $("#gridDeletedUser").empty().html(result);
+                        $("#gridDeletedUser").show();
+                        $("#gridUser").hide();
+                    }
+                    $("#pageSizeDropdown").val(pageSize);
+                }
+            });
+        });
+
+        function changePageSize() {
+            var pageSize = $("#pageSizeDropdown").val();
+            var t = $("#pageSizeDropdown").val();
+            //var currentPage = @Model.pager.CurrentPage;
+            var url = '@Url.Action("List", "User")';
+            var searchvalue = $("#Search").val();
+            var Sort = $("#sortDropdown").val();
+            var dlt = ($("#showDeletedButton").is(":visible")) ? 0 : 1;
+            debugger;
+            if (dlt == 1) {
+                // $("#pageSizeDropdown").hide();
+                pageSize = $("#pageSizeDropdown").val();
+                var pageSize = $("#pageSizeDropdown").val();
+            }
+            console.log("isDeleted: " + dlt);
+            console.log("pageSize: " + pageSize);
+            $.ajax({
+                url: url,
+                data: { page: 1, pageSize: pageSize, searchValue: searchvalue, sort: Sort, isDeleted: dlt },
+                type: "GET",
+                success: function (result) {
+                    if (dlt == 0) {
+                        $("#gridUser").empty().html(result);
+                        $("#gridUser").show();
+                        $("#gridDeletedUser").hide();
+                    } else {
+                        $("#gridDeletedUser").empty().html(result);
+                        $("#gridDeletedUser").show();
+                        $("#gridUser").hide();
+                    }
+                    $("#pageSizeDropdown").val(pageSize);
+                }
+            });
+        }
+
+        function changeSort() {
+            var Sort = $("#sortDropdown").val();
+            var pageSize = $("#pageSizeDropdown").val();
+            var dlt = ($("#showDeletedButton").is(":visible")) ? 0 : 1;
+            var searchvalue = $("#Search").val();
+            var url = '@Url.Action("List", "User")';
+            $.ajax({
+                url: url,
+                data: { page: 1, pageSize: pageSize, searchValue: searchvalue, sort: Sort, isDeleted: dlt },
+                type: "Get",
+                success: function (result) {
+                    if (dlt == 0) {
+                        $("#gridUser").empty();
+                        $("#gridUser").html(result);
+                        $("#pageSizeDropdown").val(pageSize);
+                        $("#sortDropdown").val(Sort);
+                    } else {
+                        $("#gridDeletedUser").empty();
+                        $("#gridDeletedUser").html(result);
+                        $("#pageSizeDropdown").val(pageSize);
+                        $("#sortDropdown").val(Sort);
+                    }
+                }
+            });
+        }
+
+        function openAddUserPage() {
+            $.ajax({
+                type: "GET",
+                url: "/User/Create",
+                success: function (result) {
+                    $("#addUserModal").html(result);
+                    $("#addUserModal").show();
+                    $("#gridUser").hide();
+                    $("#option").hide();
+
+                },
+                error: function () {
+                    alert("خطا در بارگذاری صفحه افزودن");
+                }
+            });
+        }
+
+        function CreateUser() {
+            var data = $("#addUserForm").serialize();
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: "/User/Create",
+                data: data,
+                success: function (result) {
+                    if (result.success == false) {
+                        alert("لطفا اطلاعات را کامل پر کنید ");
+                    } else {
+                        $("#gridUser").html(result);
+                        $("#addUserModal").hide();
+                        $("#gridUser").show();
+                        $("#option").show();
+                    }
+                }
+            });
+        }
+
+        function goBack() {
+            var Sort = $("#sortDropdown").val();
+            $.ajax({
+                url: '/User/List',
+                data: { sort: Sort},
+                type: 'GET',
+                success: function (result) {
+                    $("#gridUser").html(result);
+                    $("#gridUser").show();
+                    $("#option").show();
+                    $("#addUserModal").hide();
+                },
+            });
+        }
+
+        function openDetailsUser(id) {
+            $.ajax({
+                type: "GET",
+                url: "/User/Details?id=" + id,
+                success: function (result) {
+                    $("#addUserModal").html(result);
+                    $("#addUserModal").show();
+                    $("#gridUser").hide();
+                    $("#option").hide();
+                },
+                error: function (xhr, status, error) {
+                    alert("خطا در بارگذاری اطلاعات: " + error);
+                }
+            });
+        }
+
+        function openEditUser(id) {
+            $.ajax({
+                type: "GET",
+                url: "/User/Edit?id=" + id,
+                success: function (result) {
+                    $("#addUserModal").html(result);
+                    $("#addUserModal").show();
+                    $("#gridUser").hide();
+                    $("#option").hide();
+                }
+            });
+        }
+
+        function EditUser() {
+            var data = $("#editUserForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/User/Edit",
+                data: data,
+                success: function (result) {
+                    if (result.success == false) {
+                        alert("لطفا اطلاعات را کامل پر کنید ");
+                    } else {
+                        $("#gridUser").html(result);
+                        $("#addUserModal").hide();
+                        $("#gridUser").show();
+                        $("#option").show();
+                    }
+                }
+            });
+        }
+
+        function openDeleteUser(id) {
+            $.ajax({
+                type: "GET",
+                url: "/User/Delete?id=" + id,
+                success: function (result) {
+                    $("#addUserModal").html(result);
+                    $("#addUserModal").show();
+                    $("#gridUser").hide();
+                    $("#option").hide();
+                }
+            });
+        }
+
+        function DeleteUser() {
+            var data = $("#deleteUserForm").serialize();
+            $.ajax({
+                url: "/User/Delete",
+                type: "Post",
+                data: data,
+            }).done(function (result) {
+                $("#gridUser").html(result);
+                $("#addUserModal").hide();
+                $("#gridUser").show();
+                $("#option").show();
+            });
+        }
+
+        function restoreUser(id) {
+            if (confirm("آیا می‌خواهید این کاربر را بازگردانی کنید؟")) {
+                $.ajax({
+                    url: '/User/Restore/' + id,
+                    type: 'POST',
+                    success: function (result) {
+                        $("#gridDeletedUser").empty();
+                        $("#gridDeletedUser").html(result);
+                    },
+                });
+            }
+        }
+
+        function deletePermanentUser(id) {
+            if (confirm("آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟")) {
+                $.ajax({
+                    url: '/User/DeletePermanent/' + id,
+                    type: 'POST',
+                    success: function (result) {
+                        $("#gridDeletedUser").empty();
+                        $("#gridDeletedUser").html(result);
+                    },
+                });
+            }
+        }
+
+        function exportToExcel() {
+            var isDeleted = ($("#showDeletedButton").is(":visible")) ? 0 : 1;
+            window.location.href = '/User/ExportToExcel?isDeleted=' + isDeleted;
+        }
+    </script>
+}
