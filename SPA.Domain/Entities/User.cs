@@ -15,5 +15,9 @@ namespace SPA.Domain.Entities
         public string Address { get; set; }
         public DateTime Brithday { get; set; }
         public bool Dlt { get; set; } = false;
+
+        //Relation
+
+        public List<PhoneBook> phones { get; set; }
     }
 }

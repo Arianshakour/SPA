@@ -14,5 +14,13 @@ namespace SPA.Domain.Dtoes
         public string Name { get; set; }
         [Display(Name = "نام خانوادگی")]
         public string Family { get; set; }
+
+        public List<PNDtoForDelete> PhoneNumbers { get; set; } = new List<PNDtoForDelete>();
+
+        public class PNDtoForDelete
+        {
+            public int? Id { get; set; }
+            public string Number { get; set; }
+        }
     }
 }

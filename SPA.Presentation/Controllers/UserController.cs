@@ -31,7 +31,7 @@ namespace SPA.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto user)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || user.PhoneNumbers.Any(p => p == null))
             {
                 return Json(new { success = false });
             }

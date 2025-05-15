@@ -31,21 +31,21 @@ namespace SPA.Infrastructure.Repositories.Implementations
         public async Task<UserViewModel> GetAll(string searchValue, int page, int pageSize, int sort, int isDeleted)
         {
             int TotalRecord = await _context.Users.Where(x => x.Dlt == false).CountAsync();
-            var data = _context.Users.Where(x => x.Dlt == false).OrderByDescending(x => x.Id).AsQueryable();
+            var data = _context.Users.Where(x => x.Dlt == false).Include(x => x.phones).OrderByDescending(x => x.Id).AsQueryable();
             if (isDeleted != 0)
             {
-                data = _context.Users.Where(x => x.Dlt == true).OrderByDescending(x => x.Id).AsQueryable();
+                data = _context.Users.Include(x => x.phones).Where(x => x.Dlt == true).OrderByDescending(x => x.Id).AsQueryable();
                 TotalRecord = await _context.Users.Where(x => x.Dlt == true).CountAsync();
             }
             if (sort == 22)
             {
                 if (isDeleted != 0)
                 {
-                    data = _context.Users.Where(x => x.Dlt == true).AsQueryable();
+                    data = _context.Users.Include(x => x.phones).Where(x => x.Dlt == true).AsQueryable();
                 }
                 else
                 {
-                    data = _context.Users.AsQueryable();
+                    data = _context.Users.Include(x => x.phones).Where(x => x.Dlt == false).AsQueryable();
                 }
             }
             if (!string.IsNullOrEmpty(searchValue))
@@ -70,7 +70,7 @@ namespace SPA.Infrastructure.Repositories.Implementations
 
         public async Task<User?> GetById(int id)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users.Include(x => x.phones).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task Save()
@@ -98,6 +98,29 @@ namespace SPA.Infrastructure.Repositories.Implementations
             {
                 UserList = await users.ToListAsync()
             };
+        }
+
+
+        public void AddPhone(PhoneBook phone)
+        {
+            _context.PhoneBooks.Add(phone);
+        }
+        public void UpdatePhone(PhoneBook phone)
+        {
+            _context.PhoneBooks.Update(phone);
+        }
+        public void DeletePhone(PhoneBook phone)
+        {
+            _context.PhoneBooks.Remove(phone);
+        }
+        public PhoneBook GetPhoneBookById(int id)
+        {
+            var pn = _context.PhoneBooks.FirstOrDefault(x => x.PhonebookId == id);
+            if (pn == null)
+            {
+                throw new NullReferenceException();
+            }
+            return pn;
         }
     }
 }

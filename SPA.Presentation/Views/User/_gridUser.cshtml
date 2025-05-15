@@ -12,6 +12,7 @@
                     <th>ردیف</th>
                     <th>نام</th>
                     <th>نام خانوادگی</th>
+                    <th>شماره تلفن</th>
                     <th>سن</th>
                     <th>آدرس</th>
                     <th>تاریخ تولد</th>
@@ -27,6 +28,19 @@
                             <td>@i</td>
                             <td>@item.Name</td>
                             <td>@item.Family</td>
+                            <td>
+                                @if (item.phones == null || !item.phones.Any())
+                                {
+                                    <span>ندارد</span>
+                                }
+                                else
+                                {
+                                    @foreach (var ph in item.phones)
+                                    {
+                                        <div>@ph.Phonebook</div>
+                                    }
+                                }
+                            </td>
                             <td>@item.Age</td>
                             <td>@item.Address</td>
                             <td>@item.Brithday.ToShamsi()</td>

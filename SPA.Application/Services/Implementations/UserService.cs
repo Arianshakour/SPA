@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SPA.Domain.Dtoes.DeleteUserDto;
+using static SPA.Domain.Dtoes.DetailsUserDto;
+using static SPA.Domain.Dtoes.EditUserDto;
 
 namespace SPA.Application.Services.Implementations
 {
@@ -35,6 +38,19 @@ namespace SPA.Application.Services.Implementations
             };
             await _userRepository.AddUser(user);
             await _userRepository.Save();
+            if (userDto.PhoneNumbers != null && userDto.PhoneNumbers.Any())
+            {
+                foreach (var item in userDto.PhoneNumbers)
+                {
+                    var pn = new PhoneBook()
+                    {
+                        Phonebook = item,
+                        UserId = user.Id
+                    };
+                    _userRepository.AddPhone(pn);
+                    await _userRepository.Save();
+                }
+            }
         }
 
         public async Task<DetailsUserDto> GetUser(int id)
@@ -47,6 +63,11 @@ namespace SPA.Application.Services.Implementations
                 Family = user.Family,
                 Age = user.Age,
                 Brithday = user.Brithday,
+                PhoneNumbers = user.phones.Select(x => new PNDtoForDetail
+                {
+                    Id = x.PhonebookId,
+                    Number = x.Phonebook
+                }).ToList()
             };
         }
 
@@ -60,7 +81,12 @@ namespace SPA.Application.Services.Implementations
                 Name = user.Name,
                 Family = user.Family,
                 Age = user.Age,
-                Brithday = user.Brithday
+                Brithday = user.Brithday,
+                PhoneNumbers = user.phones.Select(x => new PNDto
+                {
+                    Id = x.PhonebookId,
+                    Number = x.Phonebook
+                }).ToList()
             };
         }
 
@@ -72,7 +98,33 @@ namespace SPA.Application.Services.Implementations
             user.Family = userDto.Family;
             user.Age = userDto.Age;
             user.Brithday = userDto.Brithday;
-            _userRepository.UpdateUser(user);
+            var x = userDto.PhoneNumbers;
+            //_userRepository.UpdateUser(user);
+            //in khat zir mige ke onaei ke az form hazf kardio az database hazf kone
+            var toRemove = user.phones.Where(x => !userDto.PhoneNumbers.Any(pn => pn.Id == x.PhonebookId)).ToList();
+            foreach (var i in toRemove)
+            {
+                _userRepository.DeletePhone(i);
+            }
+            foreach (var item in userDto.PhoneNumbers)
+            {
+                if (item.Id.HasValue)
+                {
+                    //edit
+                    var existing = _userRepository.GetPhoneBookById(item.Id.Value);
+                    existing.Phonebook = item.Number;
+                }
+                else
+                {
+                    //add
+                    var n = new PhoneBook()
+                    {
+                        Phonebook = item.Number,
+                        UserId = user.Id
+                    };
+                    _userRepository.AddPhone(n);
+                }
+            }
             await _userRepository.Save();
         }
 
@@ -83,7 +135,12 @@ namespace SPA.Application.Services.Implementations
             {
                 Id = user.Id,
                 Name = user.Name,
-                Family = user.Family
+                Family = user.Family,
+                PhoneNumbers = user.phones.Select(x => new PNDtoForDelete
+                {
+                    Id = x.PhonebookId,
+                    Number = x.Phonebook
+                }).ToList()
             };
         }
 
@@ -106,6 +163,11 @@ namespace SPA.Application.Services.Implementations
         public async Task DeletePermanent(int id)
         {
             var user = await _userRepository.GetById(id);
+            var phoneOfUser = user.phones.Where(x => x.UserId == user.Id).ToList();
+            foreach (var i in phoneOfUser)
+            {
+                _userRepository.DeletePhone(i);
+            }
             _userRepository.DeleteUser(user);
             await _userRepository.Save();
         }

@@ -30,5 +30,13 @@ namespace SPA.Domain.Dtoes
             {
             }
         }
+
+        public List<PNDtoForDetail> PhoneNumbers { get; set; } = new List<PNDtoForDetail>();
+
+        public class PNDtoForDetail
+        {
+            public int? Id { get; set; }
+            public string Number { get; set; }
+        }
     }
 }

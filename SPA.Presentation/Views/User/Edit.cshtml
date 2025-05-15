@@ -25,6 +25,24 @@
                     <input asp-for="@Model.Address" class="form-control" />
                     <span asp-validation-for="@Model.Address" class="text-danger"></span>
                 </div>
+                <div id="phoneNumbersContainerr">
+                    @for (int i = 0; i < Model.PhoneNumbers.Count; i++)
+                    {
+                        //hatman name ra bedone @Model benevis vagarna null mishe yani name="PhoneNumbers[@i].Number"
+                        <div class="form-group phone-number-group" id="ph_@i">
+                            <label class="control-label">شماره تلفن</label>
+                            <div class="d-flex">
+                                <input type="hidden" name="PhoneNumbers[@i].Id" value="@Model.PhoneNumbers[@i].Id" />
+                                <input type="text" name="PhoneNumbers[@i].Number" value="@Model.PhoneNumbers[@i].Number" class="form-control" />
+                                <span asp-validation-for="@Model.PhoneNumbers[@i].Number" class="text-danger"></span>
+                                <a role="button" class="btn-icon fa-lg" title="حذف" onclick="removePN(@i)">
+                                    <i class='fas fa-trash'></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button type="button" onclick="addPN()" class="btn btn-secondary">افزودن</button>
                 <div class="input-group2">
                     <label asp-for="@Model.Age" class="control-label"></label>
                     <input asp-for="@Model.Age" class="form-control" />
@@ -35,7 +53,7 @@
                     <input type="text" id="EditPersianBrithday" asp-for="@Model.PersianBrithday" class="form-control" />
                     <span asp-validation-for="@Model.PersianBrithday" class="text-danger"></span>
                 </div>
-                <div class="form-group d-flex justify-content-between mt-3">
+                <div class="form-group d-flex justify-content-between mt-3 mb-5">
                     <button type="button" class="btn btn-success" onclick="EditUser()" style="width: 48%;">ثبت</button>
                     <button type="button" class="btn btn-secondary" onclick="goBack()" style="width: 48%;">بازگشت</button>
                 </div>
@@ -45,6 +63,29 @@
 </div>
 
 <script>
+    let phoneNumberIndex = @Model.PhoneNumbers?.Count;
+    function addPN() {
+        $('#phoneNumbersContainerr').append("<div class='phone-number-group' id='ph_" + phoneNumberIndex + "'><label>شماره تلفن</label><div class='d-flex align-items-center'><input type='hidden' name='PhoneNumbers[" + phoneNumberIndex + "].Id' /><input type='text' name='PhoneNumbers[" + phoneNumberIndex + "].Number' id='phoneNumbers_" + phoneNumberIndex + "' class='form-control' style='margin-left:10px;margin-bottom:5px;'/><a type='button' class='btn-icon fa-lg' title='حذف' onclick='removePN(" + phoneNumberIndex + ")'><i class='fas fa-trash'></i></a><span class='text-danger'></span></div></div>");
+        phoneNumberIndex++;
+    }
+
+
+    function removePN(id) {
+        $('#ph_' + id).remove();
+        updatePN();
+    }
+
+    function updatePN() {
+        $('#phoneNumbersContainerr .phone-number-group').each(function (newIndex) {
+            $(this).attr('id', 'ph_' + newIndex);
+            $(this).find('input[type="hidden"]').attr('name', 'PhoneNumbers[' + newIndex + '].Id');
+            $(this).find('input[type="text"]').attr('name', 'PhoneNumbers[' + newIndex + '].Number');
+            $(this).find('.btn-icon').attr('onclick', 'removePN(' + newIndex + ')');
+        });
+    }
+
+
+
     $(document).ready(function () {
         $('#EditPersianBrithday').persianDatepicker({
             autoClose: true,

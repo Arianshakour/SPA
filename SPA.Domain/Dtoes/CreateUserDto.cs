@@ -35,5 +35,11 @@ namespace SPA.Domain.Dtoes
             {
             }
         }
+
+        [Display(Name = "شماره تلفن")]
+        // in new List<string>() zadam ke khataye null nade ke felan vase valid bardashtam
+        [MinLength(1, ErrorMessage = "حداقل یک شماره تلفن الزامی است")]
+        [Required(ErrorMessage = "فیلد {0} نباید خالی باشد")]
+        public List<string> PhoneNumbers { get; set; }
     }
 }

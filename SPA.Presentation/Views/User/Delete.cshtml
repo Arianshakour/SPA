@@ -18,10 +18,30 @@
                     <label asp-for="@Model.Family" class="control-label"></label>
                     <input asp-for="@Model.Family" class="form-control" readonly />
                 </div>
+                <div id="phoneNumbersContainerr">
+                    @if (Model.PhoneNumbers != null && Model.PhoneNumbers.Any())
+                    {
+                        @for (int i = 0; i < Model.PhoneNumbers.Count; i++)
+                        {
+                            //hatman name ra bedone @Model benevis vagarna null mishe yani name="PhoneNumbers[@i].Number"
+                            <div class="form-group phone-number-group" id="ph_@i">
+                                <label class="control-label">شماره تلفن</label>
+                                <div class="d-flex">
+                                    <input type="hidden" name="PhoneNumbers[@i].Id" value="@Model.PhoneNumbers[@i].Id" readonly />
+                                    <input type="text" name="PhoneNumbers[@i].Number" value="@Model.PhoneNumbers[@i].Number" class="form-control" readonly />
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span>شماره تلفنی در سیستم ثبت نشده است</span>
+                    }
+                </div>
                 <div class="form-group d-flex justify-content-between mt-3">
                     <button type="button" class="btn btn-danger" onclick="DeleteUser()" style="width: 48%;">حذف</button>
                     <button type="button" class="btn btn-secondary" onclick="goBack()" style="width: 48%;">بازگشت</button>
-                </div> 
+                </div>
             </form>
         </div>
     </div>

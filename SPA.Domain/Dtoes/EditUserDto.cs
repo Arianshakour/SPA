@@ -33,5 +33,13 @@ namespace SPA.Domain.Dtoes
                 Brithday = DateTimeConverter.ShamsiToMiladi(value);
             }
         }
+
+        public List<PNDto> PhoneNumbers { get; set; } = new List<PNDto>();
+
+        public class PNDto
+        {
+            public int? Id { get; set; }
+            public string Number { get; set; }
+        }
     }
 }

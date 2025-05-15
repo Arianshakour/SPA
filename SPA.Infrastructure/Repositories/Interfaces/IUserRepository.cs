@@ -11,5 +11,11 @@ namespace SPA.Infrastructure.Repositories.Interfaces
         void UpdateUser(User user);
         void DeleteUser(User user);
         Task<UserViewModel> GetAllForExcel(int isDeleted);
+
+        //PhoneBook
+        void AddPhone(PhoneBook phone);
+        void UpdatePhone(PhoneBook phone);
+        void DeletePhone(PhoneBook phone);
+        PhoneBook GetPhoneBookById(int id);
     }
 }
